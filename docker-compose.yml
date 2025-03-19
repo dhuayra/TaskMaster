@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  backend-tm:
+    image: php:8.1-fpm
+    container_name: taskmaster-backend
+    build:
+      context: ./backend-tm
+      dockerfile: Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./backend-tm:/var/www
+      - ./backend-tm/vendor:/var/www/vendor
+    networks:
+      - taskmaster-network
+    ports:
+      - "8000:80"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=taskmaster
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    depends_on:
+      - db
+
+  frontend-tm:
+    build:
+      context: ./frontend-tm
+    container_name: taskmaster-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend-tm:/app
+    networks:
+      - taskmaster-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend-tm
+
+  db:
+    image: mysql:5.7
+    container_name: taskmaster-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: taskmaster
+    volumes:
+      - taskmaster-db-data:/var/lib/mysql
+    networks:
+      - taskmaster-network
+    ports:
+      - "3306:3306"
+
+volumes:
+  taskmaster-db-data:
+
+networks:
+  taskmaster-network:
+    driver: bridge

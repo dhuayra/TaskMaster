@@ -1,0 +1,6 @@
+[submodule "backend-tm"]
+	path = backend-tm
+	url = https://github.com/dhuayra/TaskMaster-api.git
+[submodule "frontend-tm"]
+	path = frontend-tm
+	url = https://github.com/dhuayra/TaskMaster-NextJs.git
